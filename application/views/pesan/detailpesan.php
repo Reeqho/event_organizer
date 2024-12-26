@@ -76,69 +76,72 @@
 								<td>:</td>
 								<td><?= $dat['status_pesanan']; ?></td>
 							</tr>
+							<tr>
+								<td>Jumlah yg Harus dibayar</td>
+								<td>:</td>
+								<td>Rp. <?= $dat['harga']; ?></td>
+							</tr>
 						</table>
 					</div>
 
 					<div class="card-header py-3">
 						<h6 class="m-0 font-weight-bold text-primary">Pembayaran</h6>
 					</div>
-					<div class="row">
-						<div class="col-4">
-							<img src="<?= base_url('uploads/mandiri.jpg'); ?>" class="card-img-top">
-						</div>
-						<div class="col-8">
-							<table class="table">
-								<tr>
-									<td>No Rekening</td>
-									<td>:</td>
-									<td>0345688977877</td>
-								</tr>
-								<tr>
-									<td>Nama Bank</td>
-									<td>:</td>
-									<td>Mandiri</td>
-								</tr>
-								<tr>
-									<td>Atas Nama</td>
-									<td>:</td>
-									<td>Admin Seven Organizer</td>
-								</tr>
-								<tr>
-									<td>Jumlah yg Harus dibayar</td>
-									<td>:</td>
-									<td>Rp. <?= $dat['harga']; ?></td>
-								</tr>
-							</table>
-						</div>
-					</div>
 				<?php endforeach; ?>
 				<div class="card-header py-3">
-					<p>jika sudah melakukan transfer pembayaran silahkan upload bukti pembayaran <!-- Button for Payment -->
-					<div class="text-center mt-4">
-						<form id="payment-form" method="post" action="<?=site_url()?>/snap/finish">
-							<input type="hidden" name="result_type" id="result-type" value=""></div>
-							<input type="hidden" name="result_data" id="result-data" value=""></div>
-							<input type="hidden" name="harga" id="harga" value="<?= $dat['harga']; ?>"></div>
-							<button id="pay-button" class="btn btn-primary btn-lg">Pay!</button>
-						</form>
-					</div>
-					</p>
+					<p>jika sudah melakukan pemesanan maka klik tombol pay
+					<form id="payment-form" method="post" action="<?= site_url() ?>/snap/finish">
+						<div class="form-group" hidden>
+							<input type="text" name="id_pesan" value="<?= $dat['id_pesan']; ?>">
+						</div>
+						<div class="form-group" hidden>
+							<input type="text" name="id_user" value="<?= $this->session->userdata('id_user'); ?>">
+						</div>
+						<div class="form-group" hidden>
+							<input type="text" name="id_produk" value="<?= $dat['id_produk']; ?>">
+						</div>
+						<div class="form-group" hidden>
+							<input type="hidden" name="result_type" id="result-type" value="">
+						</div>
+						<div class="form-group" hidden>
+							<input type="hidden" name="result_data" id="result-data" value="">
+						</div>
+						<div class="form-group" hidden>
+							<input type="hidden" name="harga" id="harga" value="<?= $dat['harga']; ?>">
+							<input type="hidden" name="nama_pemesan" id="nama_pemesan" value="<?= $dat['nama_pemesan']; ?>">
+							<input type="hidden" name="nama_produk" id="nama_produk" value="<?= $dat['nama_produk']; ?>">
+							<input type="hidden" name="no_hp" id="no_hp" value="<?= $dat['no_hp']; ?>">
+							<input type="hidden" name="alamat" id="alamat" value="<?= $dat['alamat']; ?>">
+						</div>
+						<button id="pay-button" class="btn btn-primary btn-lg">Pay!</button>
+					</form>
 				</div>
+				</p>
 			</div>
 		</div>
 	</div>
+</div>
 </div>
 <script type="text/javascript">
 	$('#pay-button').click(function(event) {
 		event.preventDefault();
 		$(this).attr("disabled", "disabled");
 
-		var harga = document.getElementById('harga').value;
+		var harga = $('#harga').val();
+		var nama_pemesan = $('#nama_pemesan').val();
+		var nama_produk = $('#nama_produk').val();
+		var no_hp = $('#no_hp').val();
+		var alamat = $('#alamat').val();
+
 		$.ajax({
 			type: 'POST',
 			url: '<?= site_url() ?>/snap/token',
 			data: {
-				harga: harga
+				harga: harga,
+				nama_pemesan: nama_pemesan,
+				nama_produk: nama_produk,
+				no_hp: no_hp,
+				alamat: alamat
 			},
 			cache: false,
 			success: function(data) {
