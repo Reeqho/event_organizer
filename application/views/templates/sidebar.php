@@ -81,7 +81,7 @@
 
             <?php if($rol == 'admin'){ ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('produk/histori/pesanmasuk'); ?>">
+                    <a class="nav-link" href="<?= base_url('produk/histori/pesanMenungguKonfirmasi'); ?>">
                     <i class=""></i>
                     <span>Pesanan Masuk</span></a>
                 </li>

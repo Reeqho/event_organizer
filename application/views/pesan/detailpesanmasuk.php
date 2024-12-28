@@ -74,20 +74,6 @@
             </table>
           </div>
 
-          <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Bukti Pembayaran</h6>
-          </div>
-
-          <div class="col-12">
-            <a href="<?= base_url('uploads/buktibayar/') . $dat['gambarbukti']; ?>">
-              <img src="<?= base_url('uploads/buktibayar/') . $dat['gambarbukti']; ?>" style="height: 200px; width:150px;">
-            </a>
-          </div>
-
-          <div class="col-12"><br>
-            <a href="<?= base_url('produk/pesan/terima/') . $dat['id_pesan']; ?>" class="btn btn-primary action-button">Terima</a>
-            <a href="<?= base_url('produk/pesan/tolak/') . $dat['id_pesan']; ?>" class="btn btn-danger action-button" style="margin-left: 800px;">Tolak</a>
-          </div>
         <?php endforeach; ?>
       </div>
     </div>
