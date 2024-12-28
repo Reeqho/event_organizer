@@ -14,6 +14,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
+                            <th>Order Id</th>
                             <th>Tgl Pesan</th>
                             <th>Nama Pemesan</th>
                             <th>No HP</th>
@@ -25,6 +26,7 @@
                     <tbody>
                         <?php foreach ($histori as $dat) : ?>
                         <tr>
+                            <td><?= $dat['order_id']; ?></td>
                             <td><?= $dat['tgl_pesan']; ?></td>
                             <td><?= $dat['nama_pemesan']; ?></td>
                             <td><?= $dat['no_hp']; ?></td>

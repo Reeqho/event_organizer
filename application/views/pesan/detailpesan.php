@@ -113,6 +113,11 @@
 							<input type="hidden" name="no_hp" id="no_hp" value="<?= $dat['no_hp']; ?>">
 							<input type="hidden" name="alamat" id="alamat" value="<?= $dat['alamat']; ?>">
 						</div>
+						<div class="form-group" hidden>
+							<input type="text" name="id_pesan" value="<?= $dat['id_pesan']; ?>">
+							<input type="text" name="id_user" value="<?= $this->session->userdata('id_user'); ?>">
+							<input type="text" name="id_produk" value="<?= $dat['id_produk']; ?>">
+						</div>
 						<button id="pay-button" class="btn btn-primary btn-lg">Pay!</button>
 					</form>
 				</div>

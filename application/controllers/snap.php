@@ -72,14 +72,18 @@ class Snap extends CI_Controller
 
 		// // Optional
 		$shipping_address = array(
-		  'first_name'    => $nama_pemesan,
-		  'address'       => $alamat,
+			'first_name'    => $nama_pemesan,
+			'phone'         => $no_hp,
+			'address'       => $alamat,
+			'country_code'  => 'IDN'
+
 		);
 
 		// Optional
 		$customer_details = array(
 			'first_name'    => $nama_pemesan,
 			'phone'         => $no_hp,
+			'shipping_address' => $shipping_address
 		);
 
 		// Data yang akan dikirim untuk request redirect_url.
@@ -91,7 +95,7 @@ class Snap extends CI_Controller
 		$custom_expiry = array(
 			'start_time' => date("Y-m-d H:i:s O", $time),
 			'unit' => 'minute',
-			'duration'  => 2
+			'duration'  => 10
 		);
 
 		$transaction_data = array(
@@ -110,9 +114,41 @@ class Snap extends CI_Controller
 
 	public function finish()
 	{
-		$result = json_decode($this->input->post('result_data'));
-		echo 'RESULT <br><pre>';
-		var_dump($result);
-		echo '</pre>';
+		$id_pesan = $this->input->post('id_pesan');
+		$id_user = $this->input->post('id_user');
+		$id_produk = $this->input->post('id_produk');
+
+		$result = json_decode($this->input->post('result_data'), true);
+		$data = [
+			'id_pesan' => $id_pesan,
+			'id_user' => $id_user,
+			'id_produk' => $id_produk,
+			'order_id' => $result['order_id'],
+			'gross_amount' => $result['gross_amount'],
+			'payment_type' => $result['payment_type'],
+			'transaction_time' => $result['transaction_time'],
+			'bank' => $result['va_numbers'][0]['bank'],
+			'va_number' => $result['va_numbers'][0]['va_number'],
+			'pdf_url' => $result['pdf_url'],
+			'status_code' => $result['status_code'],
+		];
+
+		$data2 =[
+			'status_pesanan' => 'Menunggu Konfirmasi'
+		];
+
+		try {
+			// Insert data ke tb_bayar
+			$this->db->insert('tb_bayar', $data);
+
+			// Update status_pesanan menjadi Menunggu Konfirmasi
+			$this->db->update('tb_pesan', $data2, ['id_pesan' => $id_pesan]);
+
+			// Redirect ke halaman detailpesan
+			redirect('produk/pesan');
+		} catch (Exception $e) {
+			// Tampilkan error jika ada
+			show_error($e->getMessage());
+		}
 	}
 }
