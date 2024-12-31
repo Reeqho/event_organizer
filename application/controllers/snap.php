@@ -133,7 +133,7 @@ class Snap extends CI_Controller
 			'status_code' => $result['status_code'],
 		];
 
-		$data2 =[
+		$data2 = [
 			'status_pesanan' => 'Menunggu Konfirmasi'
 		];
 
@@ -144,11 +144,61 @@ class Snap extends CI_Controller
 			// Update status_pesanan menjadi Menunggu Konfirmasi
 			$this->db->update('tb_pesan', $data2, ['id_pesan' => $id_pesan]);
 
+			// Ambil informasi nomor telepon pengguna
+			$this->db->select('tb_pesan.no_hp, tb_pesan.nama_pemesan');
+			$this->db->from('tb_pesan');
+			$this->db->where('id_pesan', $id_pesan);
+			$query = $this->db->get();
+			$user = $query->row();
+
+			if ($user) {
+				$nomor = $user->no_hp;
+				$nama = $user->nama_pemesan;
+				$order_id = $result['order_id'];
+				$this->db->select('nama_produk');
+				$this->db->from('tb_produk');
+				$this->db->where('id_produk', $id_produk);
+				$query = $this->db->get();
+				$produk = $query->row();
+				$nama_pesanan = $produk ? $produk->nama_produk : 'Produk tidak ditemukan';
+
+				// Pesan WhatsApp yang dikirim
+				$pesan = "Halo $nama, pesanan Anda $nama_pesanan dengan Order ID $order_id sedang menunggu konfirmasi pembayaran dari Admin";
+
+				// Kirim pesan WhatsApp
+				$this->kirimPesan($nomor, $pesan);
+			}
+
 			// Redirect ke halaman detailpesan
 			redirect('produk/pesan');
 		} catch (Exception $e) {
 			// Tampilkan error jika ada
 			show_error($e->getMessage());
 		}
+	}
+
+	private function kirimPesan($nomor, $pesan)
+	{
+		$apiKey = 'ZYHZ5YH3FItjLizVJVVDKTXbSSoDt6JXcjO3sh912Vq1iNoOJjvucIY2uAyKI26h'; // Ganti dengan API Key Anda
+		$url = 'https://bdg.wablas.com/api/send-message';
+		$data = [
+			'phone' => $nomor, // Nomor tujuan
+			'message' => $pesan, // Pesan yang dikirim
+		];
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			'Authorization: ' . $apiKey,
+			'Content-Type: application/json',
+		]);
+
+		$response = curl_exec($ch);
+		curl_close($ch);
+
+		return $response; // Mengembalikan respon dari Wablas
 	}
 }
