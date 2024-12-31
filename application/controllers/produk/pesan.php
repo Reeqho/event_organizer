@@ -20,7 +20,6 @@ class pesan extends CI_Controller
 		$this->load->view('templates/footer');
 	}
 
-
 	public function detailpesan($id)
 	{
 		$data = [
@@ -32,8 +31,6 @@ class pesan extends CI_Controller
 		$this->load->view('pesan/detailpesan', $data);
 		$this->load->view('templates/footer');
 	}
-
-
 
 	public function pesan($id)
 	{
@@ -124,6 +121,32 @@ class pesan extends CI_Controller
 		redirect('produk/histori/pesanmasuk');
 	}
 
+	private function kirimPesan($nomor, $pesan)
+	{
+		$apiKey = 'ZYHZ5YH3FItjLizVJVVDKTXbSSoDt6JXcjO3sh912Vq1iNoOJjvucIY2uAyKI26h'; // Ganti dengan API Key Anda
+		$url = 'https://bdg.wablas.com/api/send-message';
+		$data = [
+			'phone' => $nomor, // Nomor tujuan
+			'message' => $pesan, // Pesan yang dikirim
+		];
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			'Authorization: ' . $apiKey,
+			'Content-Type: application/json',
+		]);
+
+		$response = curl_exec($ch);
+		curl_close($ch);
+
+		return $response; // Mengembalikan respon dari Wablas
+	}
+
+
 	public function konfirmasiPesanan($id_pesan)
 	{
 		$data = ['status_pesanan' => 'Pesanan Dikonfirmasi'];
@@ -137,6 +160,19 @@ class pesan extends CI_Controller
 		$this->db->where('id_pesan', $id_pesan);
 		$this->db->update('tb_bayar', $data2);
 
+		// Ambil nomor telepon pelanggan berdasarkan id_pesan
+		$this->db->select('tb_pesan.no_hp, tb_pesan.nama_pemesan');
+		$this->db->from('tb_pesan');
+		$this->db->where('id_pesan', $id_pesan);
+		$query = $this->db->get();
+		$result = $query->row();
+
+		if ($result) {
+			$nomor = $result->no_hp;
+			$nama = $result->nama_pemesan;
+			$pesan = "Halo, $nama. Pesanan Anda telah dikonfirmasi. Terima kasih telah berbelanja di toko kami.";
+			$this->kirimPesan($nomor, $pesan);
+		}
 		// Redirect kembali ke halaman pesanan menunggu konfirmasi
 		redirect('produk/histori');
 	}
