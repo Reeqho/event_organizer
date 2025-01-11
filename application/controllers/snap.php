@@ -179,7 +179,7 @@ class Snap extends CI_Controller
 
 	private function kirimPesan($nomor, $pesan)
 	{
-		$apiKey = 'ZYHZ5YH3FItjLizVJVVDKTXbSSoDt6JXcjO3sh912Vq1iNoOJjvucIY2uAyKI26h'; // Ganti dengan API Key Anda
+		$apiKey = 'guZUgIeZTy9IMCNzaPqGPhwGOzbob6uissjCEIkPPO3TuYzBRGph7bhzTzGvWDXq.aTlUhOJy'; // Ganti dengan API Key Anda
 		$url = 'https://bdg.wablas.com/api/send-message';
 		$data = [
 			'phone' => $nomor, // Nomor tujuan
