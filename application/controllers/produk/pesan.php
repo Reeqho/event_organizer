@@ -87,7 +87,7 @@ class pesan extends CI_Controller
 		$no_hp = $this->input->post('no_hp');
 		$alamat = $this->input->post('alamat');
 		$tgl_pesan = $this->input->post('tgl_pesan');
-		$status = 'menunggu pembayaran';
+		$status = 'menunggu konfirmasi';
 
 		$data = [
 			'id_produk' => $id_produk,
@@ -123,7 +123,7 @@ class pesan extends CI_Controller
 
 	private function kirimPesan($nomor, $pesan)
 	{
-		$apiKey = 'ZYHZ5YH3FItjLizVJVVDKTXbSSoDt6JXcjO3sh912Vq1iNoOJjvucIY2uAyKI26h'; // Ganti dengan API Key Anda
+		$apiKey = 'guZUgIeZTy9IMCNzaPqGPhwGOzbob6uissjCEIkPPO3TuYzBRGph7bhzTzGvWDXq.aTlUhOJy'; // Ganti dengan API Key Anda
 		$url = 'https://bdg.wablas.com/api/send-message';
 		$data = [
 			'phone' => $nomor, // Nomor tujuan
@@ -147,18 +147,14 @@ class pesan extends CI_Controller
 	}
 
 
-	public function konfirmasiPesanan($id_pesan)
+	public function konfirmasiPesanan($id_pesan, $status)
 	{
-		$data = ['status_pesanan' => 'Pesanan Dikonfirmasi'];
-		$data2 = ['status_code' => '200'];
+
+		$data = ['status_pesanan' => $status];
 
 		// Update status pesanan
 		$this->db->where('id_pesan', $id_pesan);
 		$this->db->update('tb_pesan', $data);
-
-		// update status bayar
-		$this->db->where('id_pesan', $id_pesan);
-		$this->db->update('tb_bayar', $data2);
 
 		// Ambil nomor telepon pelanggan berdasarkan id_pesan
 		$this->db->select('tb_pesan.no_hp, tb_pesan.nama_pemesan');
@@ -170,7 +166,38 @@ class pesan extends CI_Controller
 		if ($result) {
 			$nomor = $result->no_hp;
 			$nama = $result->nama_pemesan;
-			$pesan = "Halo, $nama. Pesanan Anda telah dikonfirmasi. Terima kasih telah berbelanja di toko kami.";
+			if ($status == "menunggu_pembayaran") {
+				$pesan = "Halo, $nama. Pesanan Anda telah dikonfirmasi. Silahkan Lakukan Pembayaran.";
+			} elseif ($status == "konfirmasi_ditolak") {
+				$pesan = "Halo, $nama. Maaf, pesanan Anda telah ditolak.";
+			}
+			$this->kirimPesan($nomor, $pesan);
+		}
+
+		// Redirect kembali ke halaman pesanan menunggu konfirmasi
+		redirect('produk/histori');
+	}
+
+	public function konfirmasipembayaran($id_pesan)
+	{
+		$data = ['status_pesanan' => 'Pembayaran Selesai'];
+
+		// Update status pesanan
+		$this->db->where('id_pesan', $id_pesan);
+		$this->db->update('tb_pesan', $data);
+
+
+		// Ambil nomor telepon pelanggan berdasarkan id_pesan
+		$this->db->select('tb_pesan.no_hp, tb_pesan.nama_pemesan');
+		$this->db->from('tb_pesan');
+		$this->db->where('id_pesan', $id_pesan);
+		$query = $this->db->get();
+		$result = $query->row();
+
+		if ($result) {
+			$nomor = $result->no_hp;
+			$nama = $result->nama_pemesan;
+			$pesan = "Halo, $nama. Pembayaran Anda telah dikonfirmasi. Pesanan Anda sedang diproses. Terima Kasih telah berbelanja.";
 			$this->kirimPesan($nomor, $pesan);
 		}
 		// Redirect kembali ke halaman pesanan menunggu konfirmasi

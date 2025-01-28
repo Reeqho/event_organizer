@@ -6,8 +6,10 @@ class Model_pesan extends CI_Model
 	{
 		$id = $this->session->userdata('id_user');
 		$query = "SELECT tb_pesan.*, tb_produk.id_produk,tb_produk.nama_produk,tb_produk.harga,tb_produk.deskripsi,tb_produk.gambar
-                  FROM tb_pesan JOIN tb_produk
-                  ON tb_pesan.id_produk=tb_produk.id_produk where tb_pesan.id_user='$id' and tb_pesan.status_pesanan='menunggu pembayaran'";
+				  FROM tb_pesan JOIN tb_produk
+				  ON tb_pesan.id_produk=tb_produk.id_produk 
+				  WHERE tb_pesan.id_user='$id' 
+				  AND (tb_pesan.status_pesanan='menunggu_pembayaran' OR tb_pesan.status_pesanan='menunggu konfirmasi' OR tb_pesan.status_pesanan='konfirmasi_ditolak')";
 		return $this->db->query($query)->result_array();
 	}
 
@@ -39,7 +41,7 @@ class Model_pesan extends CI_Model
 	{
 		$query = "SELECT tb_bayar.*, tb_pesan.id_pesan,tb_pesan.kategori,tb_pesan.nama_pemesan,tb_pesan.no_hp,tb_pesan.alamat,tb_pesan.tgl_pesan,tb_pesan.status_pesanan
                   FROM tb_bayar JOIN tb_pesan
-                  ON tb_bayar.id_pesan=tb_pesan.id_pesan where tb_pesan.status_pesanan='menunggu pembayaran'";
+                  ON tb_bayar.id_pesan=tb_pesan.id_pesan where tb_pesan.status_pesanan='menunggu_pembayaran'";
 		return $this->db->query($query)->result_array();
 	}
 
@@ -54,24 +56,21 @@ class Model_pesan extends CI_Model
 	public function getPesanMenungguKonfirmasi()
 	{
 		$query = "SELECT 
-                tb_bayar.*, 
-  				    tb_pesan.id_pesan, 
-                tb_pesan.kategori, 
-                tb_pesan.nama_pemesan, 
-                tb_pesan.no_hp, 
-                tb_pesan.alamat, 
-                tb_pesan.tgl_pesan, 
-                tb_pesan.status_pesanan, 
-                tb_produk.nama_produk, 
-                tb_produk.harga 
-              FROM 
-                tb_bayar 
-              JOIN 
-                tb_pesan ON tb_bayar.id_pesan = tb_pesan.id_pesan 
-              JOIN 
-                tb_produk ON tb_bayar.id_produk = tb_produk.id_produk 
-              WHERE 
-                tb_pesan.status_pesanan = 'menunggu konfirmasi'";
+				tb_pesan.id_pesan, 
+				tb_pesan.kategori, 
+				tb_pesan.nama_pemesan, 
+				tb_pesan.no_hp, 
+				tb_pesan.alamat, 
+				tb_pesan.tgl_pesan, 
+				tb_pesan.status_pesanan, 
+				tb_produk.nama_produk, 
+				tb_produk.harga 
+			  FROM 
+				tb_pesan 
+			  JOIN 
+				tb_produk ON tb_pesan.id_produk = tb_produk.id_produk 
+			  WHERE 
+				tb_pesan.status_pesanan = 'menunggu konfirmasi'";
 		return $this->db->query($query)->result_array();
 	}
 

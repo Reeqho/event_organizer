@@ -39,94 +39,104 @@
 								<td><?= $dat['harga']; ?></td>
 							</tr>
 							<tr>
-								<td>Deskripsi</td>
+								<td>Jasa Yang Ditawarkan</td>
 								<td>:</td>
 								<td><?= $dat['deskripsi']; ?></td>
 							</tr>
 						</table><br>
 					</div>
 
-					<div class="card-header py-3">
-						<h6 class="m-0 font-weight-bold text-primary">Data Pemesan</h6>
-					</div>
-					<div class="col-12">
-						<table class="table">
-							<tr>
-								<td>Nama Pemesan</td>
-								<td>:</td>
-								<td><?= $dat['nama_pemesan']; ?></td>
-							</tr>
-							<tr>
-								<td>No Handphone</td>
-								<td>:</td>
-								<td><?= $dat['no_hp']; ?></td>
-							</tr>
-							<tr>
-								<td>Alamat</td>
-								<td>:</td>
-								<td><?= $dat['alamat']; ?></td>
-							</tr>
-							<tr>
-								<td>Tgl Pesan</td>
-								<td>:</td>
-								<td><?= $dat['tgl_pesan']; ?></td>
-							</tr>
-							<tr>
-								<td>Status Pesanan</td>
-								<td>:</td>
-								<td><?= $dat['status_pesanan']; ?></td>
-							</tr>
-							<tr>
-								<td>Jumlah yg Harus dibayar</td>
-								<td>:</td>
-								<td>Rp. <?= $dat['harga']; ?></td>
-							</tr>
-						</table>
+					<div class="card">
+						<div class="card-header py-3 bg-primary text-white">
+							<h6 class="m-0 font-weight-bold">Data Pemesanan</h6>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table table-borderless">
+									<tbody>
+										<tr>
+											<th class="text-secondary">Nama Pemesan (Beserta Alamat)</th>
+											<td>:</td>
+											<td><strong><?= $dat['nama_pemesan']; ?></strong></td>
+										</tr>
+										<tr>
+											<th class="text-secondary">No Handphone</th>
+											<td>:</td>
+											<td><strong><?= $dat['no_hp']; ?></strong></td>
+										</tr>
+										<tr>
+											<th class="text-secondary">Permintaan Pesanan</th>
+											<td>:</td>
+											<td><strong><?= $dat['alamat']; ?></strong></td>
+										</tr>
+										<tr>
+											<th class="text-secondary">Tgl Pesan</th>
+											<td>:</td>
+											<td><strong><?= $dat['tgl_pesan']; ?></strong></td>
+										</tr>
+										<tr>
+											<th class="text-secondary">Status Pesanan</th>
+											<td>:</td>
+											<td><span class="badge badge-<?= $dat['status_pesanan'] == 'Selesai' ? 'success' : 'warning'; ?>">
+													<?= $dat['status_pesanan']; ?>
+												</span></td>
+										</tr>
+										<tr>
+											<th class="text-secondary">Jumlah yang Harus Dibayar</th>
+											<td>:</td>
+											<td><strong class="text-primary">Rp. <?= number_format($dat['harga'], 0, ',', '.'); ?></strong></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 
+
 					<div class="card-header py-3">
-						<h6 class="m-0 font-weight-bold text-primary">Pembayaran</h6>
+						<p>jika sudah melakukan pemesanan maka klik tombol pay
+						<form id="payment-form" method="post" action="<?= site_url() ?>/snap/finish">
+							<div class="form-group" hidden>
+								<input type="text" name="id_pesan" value="<?= $dat['id_pesan']; ?>">
+							</div>
+							<div class="form-group" hidden>
+								<input type="text" name="id_user" value="<?= $this->session->userdata('id_user'); ?>">
+							</div>
+							<div class="form-group" hidden>
+								<input type="text" name="id_produk" value="<?= $dat['id_produk']; ?>">
+							</div>
+							<div class="form-group" hidden>
+								<input type="hidden" name="result_type" id="result-type" value="">
+							</div>
+							<div class="form-group" hidden>
+								<input type="hidden" name="result_data" id="result-data" value="">
+							</div>
+							<div class="form-group" hidden>
+								<input type="hidden" name="harga" id="harga" value="<?= $dat['harga']; ?>">
+								<input type="hidden" name="nama_pemesan" id="nama_pemesan" value="<?= $dat['nama_pemesan']; ?>">
+								<input type="hidden" name="nama_produk" id="nama_produk" value="<?= $dat['nama_produk']; ?>">
+								<input type="hidden" name="no_hp" id="no_hp" value="<?= $dat['no_hp']; ?>">
+								<input type="hidden" name="alamat" id="alamat" value="<?= $dat['alamat']; ?>">
+							</div>
+							<div class="form-group" hidden>
+								<input type="text" name="id_pesan" value="<?= $dat['id_pesan']; ?>">
+								<input type="text" name="id_user" value="<?= $this->session->userdata('id_user'); ?>">
+								<input type="text" name="id_produk" value="<?= $dat['id_produk']; ?>">
+							</div>
+							<?php if ($dat['status_pesanan'] == 'menunggu_pembayaran' && $this->session->userdata('id_user') == $dat['id_user']) : ?>
+								<button id="pay-button" class="btn btn-primary btn-lg">Pay!</button>
+							<?php else : ?>
+								<button class="btn btn-secondary btn-lg" disabled>Pay!</button>
+							<?php endif; ?>
+						</form>
 					</div>
-				<?php endforeach; ?>
-				<div class="card-header py-3">
-					<p>jika sudah melakukan pemesanan maka klik tombol pay
-					<form id="payment-form" method="post" action="<?= site_url() ?>/snap/finish">
-						<div class="form-group" hidden>
-							<input type="text" name="id_pesan" value="<?= $dat['id_pesan']; ?>">
-						</div>
-						<div class="form-group" hidden>
-							<input type="text" name="id_user" value="<?= $this->session->userdata('id_user'); ?>">
-						</div>
-						<div class="form-group" hidden>
-							<input type="text" name="id_produk" value="<?= $dat['id_produk']; ?>">
-						</div>
-						<div class="form-group" hidden>
-							<input type="hidden" name="result_type" id="result-type" value="">
-						</div>
-						<div class="form-group" hidden>
-							<input type="hidden" name="result_data" id="result-data" value="">
-						</div>
-						<div class="form-group" hidden>
-							<input type="hidden" name="harga" id="harga" value="<?= $dat['harga']; ?>">
-							<input type="hidden" name="nama_pemesan" id="nama_pemesan" value="<?= $dat['nama_pemesan']; ?>">
-							<input type="hidden" name="nama_produk" id="nama_produk" value="<?= $dat['nama_produk']; ?>">
-							<input type="hidden" name="no_hp" id="no_hp" value="<?= $dat['no_hp']; ?>">
-							<input type="hidden" name="alamat" id="alamat" value="<?= $dat['alamat']; ?>">
-						</div>
-						<div class="form-group" hidden>
-							<input type="text" name="id_pesan" value="<?= $dat['id_pesan']; ?>">
-							<input type="text" name="id_user" value="<?= $this->session->userdata('id_user'); ?>">
-							<input type="text" name="id_produk" value="<?= $dat['id_produk']; ?>">
-						</div>
-						<button id="pay-button" class="btn btn-primary btn-lg">Pay!</button>
-					</form>
-				</div>
-				</p>
+					</p>
 			</div>
 		</div>
 	</div>
 </div>
 </div>
+<?php endforeach; ?>
 <script type="text/javascript">
 	$('#pay-button').click(function(event) {
 		event.preventDefault();
