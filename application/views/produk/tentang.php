@@ -130,10 +130,10 @@
                     <option value="customer">Pelanggan</option>
                     <option value="admin">Admin</option>
                 </select>
-                <input type="text" id="chatInput" placeholder="Ketik pesan di sini...">
-                <button onclick="sendMessage()">Kirim</button>
+                <input type="text" id="chatInput" placeholder="Pesan di sini...">
+                <button onclick="sendMessage()">Request Pesanan</button>
             </div>
-
+            
             <button onclick="clearChat()">Hapus Semua Pesan</button>
         </div>
     </div>

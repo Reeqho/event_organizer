@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 13 Des 2024 pada 11.39
--- Versi server: 10.4.25-MariaDB
--- Versi PHP: 7.4.30
+-- Waktu pembuatan: 23 Jan 2025 pada 12.35
+-- Versi server: 10.4.11-MariaDB
+-- Versi PHP: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -43,10 +44,17 @@ CREATE TABLE `email_verification` (
 
 CREATE TABLE `tb_bayar` (
   `id_bayar` int(11) NOT NULL,
+  `order_id` varchar(50) NOT NULL,
   `id_pesan` int(11) NOT NULL,
   `id_produk` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
-  `gambarbukti` varchar(300) NOT NULL
+  `gross_amount` int(11) NOT NULL,
+  `payment_type` varchar(13) NOT NULL,
+  `transaction_time` varchar(19) NOT NULL,
+  `bank` varchar(10) NOT NULL,
+  `va_number` varchar(30) NOT NULL,
+  `pdf_url` text NOT NULL,
+  `status_code` char(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -65,11 +73,7 @@ CREATE TABLE `tb_kategori` (
 --
 
 INSERT INTO `tb_kategori` (`id_kategori`, `kategori`) VALUES
-(1, 'paket pernikahan'),
-(2, 'Make up & Attire'),
-(4, 'Decoration'),
-(5, 'Photo & Video Shooting'),
-(6, 'Entertainment');
+(9, 'Paket Nikah');
 
 -- --------------------------------------------------------
 
@@ -109,12 +113,10 @@ CREATE TABLE `tb_produk` (
 --
 
 INSERT INTO `tb_produk` (`id_produk`, `id_kategori`, `nama_produk`, `harga`, `deskripsi`, `gambar`) VALUES
-(4, 1, 'Paket Akad Nikah Hemat', 8000000, '- Rias dan Busana Pengantin Pria dan Wanita\r\n- Dekorasi :\r\na. Meja akad\r\nb. Kursi akad 6 Pcs\r\nc. Backdrop akad nikah\r\nd. 1 Meja Tamu\r\ne. 1 Buku Tamu\r\n- Dokumentasi\r\na. Foto Video Shooting\r\nb. 1 Album kolase Eksklusif Uk. 20 X 30, 10 Sheet ( 20 Hal )\r\nc. 1 Flashdisk Isi Foto Video Master dan Editing\r\nd. Video Klip 1 Menit Untuk di Upload ke Sosial Media (Instagram, Facebook, dll)', 'paket1.jpg'),
-(5, 2, 'Wedding Package Make Up & Attire', 4000000, 'Package for Wedding Make Up with Attire for National Wedding\r\nServices:\r\n- Make Up with retouch\r\n- Hair/Hijab Do with retouch\r\n- Free make up trial 1x\r\n- Bride & Groom Attire for Akad (not included Adat accessories)\r\n- Bride & Groom Attire for Resepsi (not included Adat accessories)\r\n- 2 pax Attire for Parents (2 Moms & 2 Dads) \r\n- 4 pax Attire for Penerima Tamu\r\n\r\nAttire Details:\r\n- Bride: Kain, longtorso, manset, kebaya, kerudung (for Hijab), veil & slop akad.\r\n- Groom: stel beskap, slop akad, jas, celana, dasi. \r\n- Dads: National beskap & kain\r\n- Moms: kain, manset, kebaya & jilbab.', 'paket2.jpg'),
-(6, 4, 'Rosepetal Backdrop Decoration & Lighting', 2000000, 'decoration, lighting, and flowers variation', 'paket3.jpg'),
-(7, 5, 'Paket fotografer videoshooting pernikahan murah !!!', 5000000, '- Album Mini 5r Colase Digital (laminating) Rp 350 Ribu .\r\n- Album 10rs Laser print (laminating) Cover Kayu Rp 450 Ribu.\r\n- Album 10rs Colase Digital (laminating) Cover Kayu Rp 550 Ribu.\r\n- Album 10rs Colase Digital (laminating) Magazine Rp 800 Ribu', 'paket4.jpg'),
-(8, 6, 'full entertainment musik', 6000000, 'full musik, singer, mc, and sound', 'paket5.jpg'),
-(9, 7, 'perlengkapan sepakbola', 1000000, 'sepakbola permainan', 'IG SO.png');
+(15, 9, 'Wedding Package Make Up & Attire', 4000000, '- Package for Wedding Make Up with Attire for National Wedding Services: - Make Up with retouch - Hair/Hijab Do with retouch - Free make up trial 1x - Bride & Groom Attire for Akad (not included Adat accessories) - Bride & Groom Attire for Resepsi (not included Adat accessories) - 2 pax Attire for Parents (2 Moms & 2 Dads) - 4 pax Attire for Penerima Tamu Attire Details: - Bride: Kain, longtorso, manset, kebaya, kerudung (for Hijab), veil & slop akad. - Groom: stel beskap, slop akad, jas, celana, dasi. - Dads: National beskap & kain - Moms: kain, manset, kebaya & jilbab.', 'wedding.jpg'),
+(16, 9, 'Rosepetal Backdrop Decoration & Lighting', 2000000, '- decoration, lighting, and flowers variation', 'rose.jpg'),
+(17, 9, 'Full entertainment musik', 6000000, '- full musik, singer, mc, and sound', 'musik.jpg'),
+(18, 9, 'Paket Fotografi Murah', 7000000, '- Album Mini 5r Colase Digital (laminating) Rp 350 Ribu . - Album 10rs Laser print (laminating) Cover Kayu Rp 450 Ribu. - Album 10rs Colase Digital (laminating) Cover Kayu Rp 550 Ribu. - Album 10rs Colase Digital (laminating) Magazine Rp 800 Ribu', 'kamera.png');
 
 -- --------------------------------------------------------
 
@@ -190,37 +192,37 @@ ALTER TABLE `tb_user`
 -- AUTO_INCREMENT untuk tabel `email_verification`
 --
 ALTER TABLE `email_verification`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_bayar`
 --
 ALTER TABLE `tb_bayar`
-  MODIFY `id_bayar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_bayar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_kategori`
 --
 ALTER TABLE `tb_kategori`
-  MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_pesan`
 --
 ALTER TABLE `tb_pesan`
-  MODIFY `id_pesan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_pesan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_produk`
 --
 ALTER TABLE `tb_produk`
-  MODIFY `id_produk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_produk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT untuk tabel `tb_user`
 --
 ALTER TABLE `tb_user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

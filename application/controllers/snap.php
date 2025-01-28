@@ -134,7 +134,7 @@ class Snap extends CI_Controller
 		];
 
 		$data2 = [
-			'status_pesanan' => 'Menunggu Konfirmasi'
+			'status_pesanan' => 'konfirmasi pembayaran'
 		];
 
 		try {

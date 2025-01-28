@@ -156,7 +156,7 @@ class produk extends CI_Controller
       $no_hp = $this->input->post('no_hp');
       $alamat = $this->input->post('alamat');
       $tgl_pesan = $this->input->post('tgl_pesan');
-      $status = 'menunggu pembayaran';
+      $status = 'menunggu konfirmasi';
 
       $data = [
             'id_produk' => $id_produk,

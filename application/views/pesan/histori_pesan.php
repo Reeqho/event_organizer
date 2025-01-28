@@ -16,9 +16,9 @@
                         <tr>
                             <th>Order Id</th>
                             <th>Tgl Pesan</th>
-                            <th>Nama Pemesan</th>
+                            <th>Nama Pemesan (Beserta Alamat)</th>
                             <th>No HP</th>
-                            <th>Alamat</th>
+                            <th>Permintaan Pesanan</th>
                             <th>Status Pesanan</th>
                             <th>Action</th>
                         </tr>
